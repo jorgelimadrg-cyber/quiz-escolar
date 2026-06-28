@@ -1,290 +1,159 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiz Escolar 2026</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Quiz Escolar Pro</title>
 <style>
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Arial,Helvetica,sans-serif;
-  background:linear-gradient(135deg,#111827,#1e3a8a,#111827);
-  color:white;
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:16px;
-}
-.app{
-  width:100%;
-  max-width:520px;
-  background:rgba(17,24,39,.94);
-  border:1px solid rgba(255,255,255,.15);
-  border-radius:24px;
-  padding:22px;
-  box-shadow:0 20px 60px rgba(0,0,0,.45);
-}
-h1{
-  text-align:center;
-  margin:0;
-  font-size:34px;
-  color:#38bdf8;
-}
-.sub{
-  text-align:center;
-  color:#cbd5e1;
-  margin:8px 0 22px;
-}
-.btn{
-  width:100%;
-  border:0;
-  border-radius:16px;
-  padding:16px;
-  margin:8px 0;
-  font-size:18px;
-  font-weight:bold;
-  color:white;
-  background:#2563eb;
-  cursor:pointer;
-}
-.btn:hover{filter:brightness(1.15)}
-.green{background:#16a34a}
-.orange{background:#ea580c}
-.red{background:#dc2626}
-.purple{background:#7c3aed}
-.card{
-  background:#0f172a;
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:18px;
-  padding:16px;
-  margin:12px 0;
-}
-.question{
-  font-size:20px;
-  line-height:1.35;
-  margin-bottom:14px;
-}
-.alt{
-  width:100%;
-  text-align:left;
-  background:#1e293b;
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:14px;
-  padding:14px;
-  margin:8px 0;
-  color:white;
-  font-size:16px;
-}
-.alt:disabled{opacity:.9}
-.correct{background:#15803d!important}
-.wrong{background:#b91c1c!important}
-.progressBox{
-  width:100%;
-  height:16px;
-  background:#334155;
-  border-radius:99px;
-  overflow:hidden;
-  margin:10px 0;
-}
-.progress{
-  height:100%;
-  width:0%;
-  background:#22c55e;
-  transition:.3s;
-}
-.top{
-  display:flex;
-  justify-content:space-between;
-  gap:8px;
-  color:#cbd5e1;
-  font-size:14px;
-}
-.center{text-align:center}
-.small{font-size:14px;color:#cbd5e1}
-.hidden{display:none}
-.badge{
-  display:inline-block;
-  padding:8px 12px;
-  border-radius:999px;
-  background:#334155;
-  margin:8px 0;
-}
-.explain{
-  background:#172554;
-  border-left:4px solid #38bdf8;
-  padding:12px;
-  border-radius:10px;
-  margin-top:12px;
-  color:#dbeafe;
-}
-</style>
-</head>
-<body>
-<div class="app">
-  <div id="menu">
-    <h1>Quiz Escolar</h1>
-    <p class="sub">Ciências e Geografia • versão celular</p>
-    <button class="btn green" onclick="startQuiz('ciencias')">🧪 Jogar Ciências</button>
-    <button class="btn orange" onclick="startQuiz('geografia')">🌎 Jogar Geografia</button>
-    <button class="btn purple" onclick="showHow()">❔ Como jogar</button>
-  </div>
-
-  <div id="how" class="hidden">
-    <h1>Como jogar</h1>
-    <div class="card">
-      <p>Escolha uma matéria, leia a pergunta e toque na alternativa correta.</p>
-      <p>Cada quiz tem 25 perguntas. No final aparece sua pontuação e ranking.</p>
-    </div>
-    <button class="btn" onclick="backMenu()">Voltar</button>
-  </div>
-
-  <div id="quiz" class="hidden">
-    <div class="top">
-      <span id="subject"></span>
-      <span id="counter"></span>
-    </div>
-    <div class="progressBox"><div id="progress" class="progress"></div></div>
-    <div class="card">
-      <div id="question" class="question"></div>
-      <div id="answers"></div>
-      <div id="feedback"></div>
-    </div>
-    <button id="nextBtn" class="btn hidden" onclick="nextQuestion()">Próxima</button>
-  </div>
-
-  <div id="result" class="hidden center">
-    <h1>Resultado</h1>
-    <div class="card">
-      <h2 id="score"></h2>
-      <div id="rank" class="badge"></div>
-      <p id="percent" class="small"></p>
-    </div>
-    <button class="btn green" onclick="restart()">Jogar de novo</button>
-    <button class="btn red" onclick="backMenu()">Menu</button>
-  </div>
-</div>
-
-<script>
-const ciencias = [
-["Sobre a estrutura básica do átomo, assinale a correta.",["Prótons e elétrons ficam no núcleo.","Prótons e nêutrons ficam no núcleo, e elétrons na eletrosfera.","Elétrons e nêutrons ficam no núcleo.","Todas as partículas ficam na eletrosfera.","O núcleo possui apenas elétrons."],1,"O núcleo possui prótons e nêutrons; elétrons ficam na eletrosfera."],
-["Sobre as cargas das partículas atômicas, marque a correta.",["Próton é negativo, elétron positivo e nêutron neutro.","Próton é neutro, elétron negativo e nêutron positivo.","Próton é positivo, elétron negativo e nêutron não possui carga.","Próton e elétron são neutros.","Todas possuem carga negativa."],2,"Próton é positivo, elétron é negativo e nêutron é neutro."],
-["Quando um átomo perde elétrons, ele se torna:",["Íon negativo.","Íon positivo.","Nêutron.","Átomo neutro.","Molécula isolante."],1,"Ao perder elétrons, fica com excesso de carga positiva."],
-["Quando um átomo ganha elétrons, ele se torna:",["Íon positivo.","Íon negativo.","Átomo sem núcleo.","Nêutron livre.","Condutor perfeito."],1,"Ganhar elétrons aumenta a carga negativa."],
-["A intensidade da corrente elétrica pode ser calculada por:",["i = Q / Δt","Q = i / Δt","Δt = i / Q","i = Δt / Q","Q = Δt / i"],0,"Corrente é carga elétrica dividida pelo intervalo de tempo."],
-["Na fórmula i = Q / Δt, os símbolos significam:",["i=resistência, Q=tensão, Δt=carga","i=corrente, Q=carga elétrica, Δt=intervalo de tempo","i=tensão, Q=corrente, Δt=resistência","i=carga, Q=resistência, Δt=corrente","i=potência, Q=energia, Δt=tensão"],1,"i é corrente, Q é carga elétrica e Δt é intervalo de tempo."],
-["A unidade correta da corrente elétrica no SI é:",["Ohm","Volt","Ampere","Coulomb","Watt"],2,"Corrente elétrica é medida em ampere."],
-["A unidade correta da carga elétrica no SI é:",["Ampere","Coulomb","Ohm","Volt","Joule"],1,"Carga elétrica é medida em coulomb."],
-["A resistência elétrica pela Primeira Lei de Ohm pode ser calculada por:",["R = U / i","R = i / U","U = R / i","i = R / U","R = U × i"],0,"Como U = R × i, então R = U / i."],
-["Na expressão U = R × i, assinale a correta.",["U é corrente, R é carga, i é tensão","U é tensão, R é resistência, i é corrente","U é resistência, R é tensão, i é tempo","U é carga, R é corrente, i é resistência","U é potência, R é energia, i é carga"],1,"U é tensão, R é resistência e i é corrente."],
-["A unidade de resistência elétrica é:",["Volt","Ampere","Ohm","Coulomb","Segundo"],2,"Resistência elétrica é medida em ohm."],
-["A unidade de tensão elétrica é:",["Ampere","Coulomb","Volt","Ohm","Newton"],2,"Tensão elétrica é medida em volt."],
-["Materiais condutores são aqueles que:",["Impedem totalmente cargas","Facilitam a passagem da corrente","Não possuem elétrons","São sempre plásticos","Anulam a tensão"],1,"Condutores facilitam o movimento das cargas."],
-["Materiais isolantes são aqueles que:",["Facilitam a corrente","Dificultam a passagem da corrente","Transformam elétrons em prótons","Não possuem átomos","Sempre aumentam a corrente"],1,"Isolantes dificultam o movimento de cargas."],
-["O efeito Joule está relacionado:",["Ao aquecimento pela passagem da corrente","Ao resfriamento do condutor","À perda de prótons","À transformação de nêutrons","Ao desaparecimento da tensão"],0,"O efeito Joule transforma energia elétrica em calor."],
-["Se a resistência aumenta e a tensão fica constante, a corrente tende a:",["Aumentar","Diminuir","Ficar infinita","Virar carga","Sumir sempre"],1,"Pela lei de Ohm, i = U / R."],
-["Se a tensão aumenta e a resistência fica constante, a corrente tende a:",["Diminuir","Aumentar","Ficar negativa sempre","Virar resistência","Não mudar"],1,"Se U aumenta e R fica igual, a corrente aumenta."],
-["A eletrosfera é a região onde ficam:",["Prótons","Nêutrons","Elétrons","Núcleos","Íons positivos apenas"],2,"Elétrons ficam na eletrosfera."],
-["Um átomo eletricamente neutro possui:",["Mais prótons que elétrons","Mais elétrons que prótons","Mesmo número de prótons e elétrons","Nenhum próton","Apenas nêutrons"],2,"Cargas positivas e negativas se equilibram."],
-["A corrente elétrica em metais ocorre principalmente pelo movimento de:",["Prótons livres","Nêutrons livres","Elétrons livres","Núcleos","Moléculas de ar"],2,"Nos metais, elétrons livres conduzem corrente."],
-["Alta tensão é usada na transmissão de energia porque:",["Diminui perdas em longas distâncias","Elimina totalmente resistência","Transforma corrente em nêutrons","Impede todo aquecimento","É usada só em casas"],0,"Alta tensão reduz perdas no transporte."],
-["Baixa tensão em residências é usada porque:",["É mais segura para uso doméstico","Não produz corrente","Anula o efeito Joule","Transforma isolantes","Faz o tempo elétrico aumentar"],0,"É mais segura para aparelhos e pessoas."],
-["A diferença entre condutor e isolante está principalmente:",["Na facilidade de movimentação das cargas","Na ausência de átomos","Na quantidade de nêutrons livres","Na cor","No tamanho"],0,"O ponto principal é o movimento das cargas."],
-["Perder elétrons deixa um corpo:",["Negativo","Positivo","Sem massa","Sem núcleo","Sempre neutro"],1,"Perder elétrons remove cargas negativas."],
-["Ganhar elétrons deixa um corpo:",["Positivo","Negativo","Sem carga","Sem átomo","Com mais prótons"],1,"Ganhar elétrons aumenta cargas negativas."]
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Arial,sans-serif;color:#fff;display:flex;align-items:center;justify-content:center;padding:16px;background:radial-gradient(circle at top,#1e40af,#020617 55%,#111827)}body:before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(circle at 20% 20%,#38bdf855,transparent 24%),radial-gradient(circle at 80% 30%,#a855f755,transparent 24%),radial-gradient(circle at 45% 85%,#22c55e33,transparent 25%);animation:f 7s infinite alternate}@keyframes f{to{transform:scale(1.12) translateY(-10px)}}.app{width:100%;max-width:560px;background:rgba(15,23,42,.92);border:1px solid #ffffff22;border-radius:28px;padding:22px;box-shadow:0 30px 80px #0008;backdrop-filter:blur(12px)}h1{margin:0;text-align:center;font-size:34px;color:#38bdf8}.sub{text-align:center;color:#cbd5e1}.card{background:#02061788;border:1px solid #ffffff22;border-radius:22px;padding:16px;margin:12px 0}.btn{width:100%;border:0;border-radius:18px;padding:15px;margin:7px 0;color:white;font-weight:800;font-size:16px;cursor:pointer;background:#2563eb}.btn:active{transform:scale(.98)}.green{background:linear-gradient(135deg,#15803d,#22c55e)}.orange{background:linear-gradient(135deg,#ea580c,#facc15)}.purple{background:linear-gradient(135deg,#7c3aed,#c084fc)}.red{background:linear-gradient(135deg,#b91c1c,#ef4444)}input{width:100%;padding:15px;border-radius:16px;border:1px solid #ffffff22;background:#0f172a;color:#fff;font-size:16px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.top{display:flex;justify-content:space-between;gap:8px;color:#cbd5e1;font-size:14px}.pill{background:#1e293b;border:1px solid #ffffff22;padding:7px 10px;border-radius:999px}.bar{height:14px;background:#334155;border-radius:999px;overflow:hidden;margin:12px 0}.fill{height:100%;width:0;background:linear-gradient(90deg,#22c55e,#38bdf8);transition:.3s}.q{font-size:20px;font-weight:800;line-height:1.35}.alt{width:100%;text-align:left;background:#1e293b;border:1px solid #ffffff22;border-radius:16px;padding:14px;margin:8px 0;color:#fff;font-size:15.7px}.alt:disabled{opacity:.95}.ok{background:#15803d!important}.bad{background:#b91c1c!important}.exp{background:#082f49;border-left:5px solid #38bdf8;padding:13px;border-radius:12px;margin-top:12px;color:#e0f2fe}.hidden{display:none}.center{text-align:center}.stat{display:flex;justify-content:space-between;border-bottom:1px solid #ffffff22;padding:10px 0;color:#cbd5e1}.stat b{color:#fff}.big{font-size:34px;font-weight:900}.badge{display:inline-block;padding:9px 13px;border-radius:999px;background:#1e293b;font-weight:900}.shake{animation:s .25s}@keyframes s{25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
+</style></head><body><div class="app" id="app">
+<section id="menu"><h1>Quiz Escolar Pro</h1><p class="sub">Ciências e Geografia • versão celular</p><div class="card"><small>Nome do jogador</small><input id="nome" placeholder="Digite seu nome"><div class="stat"><span>🏆 Recorde Ciências</span><b id="bc">0%</b></div><div class="stat"><span>🏆 Recorde Geografia</span><b id="bg">0%</b></div></div><div class="grid"><button class="btn green" onclick="start('c')">🧪 Ciências</button><button class="btn orange" onclick="start('g')">🌍 Geografia</button></div><button class="btn purple" onclick="show('how')">❔ Como jogar</button></section>
+<section id="how" class="hidden"><h1>Como jogar</h1><div class="card"><p>Escolha uma matéria, leia com atenção e toque na alternativa correta.</p><p>As perguntas e alternativas são embaralhadas. Ao errar, aparece uma explicação.</p></div><button class="btn" onclick="menu()">Voltar</button></section>
+<section id="quiz" class="hidden"><div class="top"><span class="pill" id="mat"></span><span class="pill" id="tempo">00:00</span><span class="pill" id="cont"></span></div><div class="bar"><div id="fill" class="fill"></div></div><div class="card"><div id="perg" class="q"></div><div id="alts"></div><div id="feed"></div></div><button id="next" class="btn hidden" onclick="next()">Próxima ➜</button></section>
+<section id="res" class="hidden center"><h1>Resultado</h1><div class="card"><div class="big" id="score"></div><div class="badge" id="rank"></div><div class="stat"><span>Jogador</span><b id="jn"></b></div><div class="stat"><span>Matéria</span><b id="jm"></b></div><div class="stat"><span>Acertos</span><b id="ja"></b></div><div class="stat"><span>Erros</span><b id="je"></b></div><div class="stat"><span>XP</span><b id="xp"></b></div><div class="stat"><span>Tempo</span><b id="tf"></b></div></div><button class="btn green" onclick="start(tipo)">Jogar de novo</button><button class="btn red" onclick="menu()">Menu</button></section>
+</div><script>
+function Q(p,a,c,e){return{p,a,c,e}}
+const C=[
+Q('Sobre o átomo, assinale a alternativa correta.',['Ele é indivisível em qualquer situação.','Possui prótons, nêutrons e elétrons.','É formado apenas por elétrons.','Não possui núcleo.','Todas as partículas têm a mesma carga.'],1,'O átomo possui partículas menores: prótons, nêutrons e elétrons.'),
+Q('No átomo, a organização correta é:',['Prótons e elétrons no núcleo.','Prótons e nêutrons no núcleo, elétrons ao redor.','Elétrons e nêutrons no núcleo.','Tudo fica na eletrosfera.','O núcleo possui apenas elétrons.'],1,'Prótons e nêutrons ficam no núcleo; elétrons ficam ao redor.'),
+Q('A carga do próton, elétron e nêutron é, respectivamente:',['Negativa, positiva e neutra.','Positiva, negativa e neutra.','Neutra, negativa e positiva.','Positiva, neutra e negativa.','Todas positivas.'],1,'Próton é positivo, elétron é negativo e nêutron é neutro.'),
+Q('Em metais, a corrente elétrica ocorre principalmente pelo movimento de:',['Prótons livres.','Nêutrons livres.','Elétrons livres.','Núcleos inteiros.','Moléculas de ar.'],2,'Nos metais, elétrons livres formam a corrente elétrica.'),
+Q('Condutores e isolantes diferem porque:',['Condutores dificultam elétrons.','Condutores facilitam e isolantes dificultam a passagem de corrente.','Isolantes sempre são metais.','Condutores não possuem átomos.','Isolantes anulam a tensão.'],1,'Condutores facilitam a corrente; isolantes dificultam.'),
+Q('São bons condutores:',['Borracha, vidro e madeira.','Plástico, isopor e papel.','Cobre, ouro, prata, ferro e alumínio.','Madeira, borracha e tecido.','Vidro, cerâmica e ar.'],2,'Metais são bons condutores.'),
+Q('São isolantes:',['Cobre, ouro e prata.','Ferro e alumínio.','Borracha, vidro, madeira e plástico.','Aço e cobre.','Prata e ferro.'],2,'Borracha, vidro, madeira e plástico dificultam a corrente.'),
+Q('Corrente elétrica é:',['Movimento ordenado de cargas elétricas.','Resistência do fio.','Quantidade de prótons no núcleo.','Energia parada.','Apenas calor.'],0,'Corrente elétrica é o movimento ordenado de cargas.'),
+Q('A unidade de corrente elétrica é:',['Volt.','Ohm.','Ampère.','Coulomb.','Watt.'],2,'Corrente elétrica é medida em ampère.'),
+Q('Corrente contínua é aquela que:',['Muda de sentido constantemente.','Tem sentido único, comum em pilhas e baterias.','É usada apenas em tomadas.','Não transporta energia.','Não possui elétrons.'],1,'Corrente contínua possui sentido único.'),
+Q('Corrente alternada é aquela que:',['Tem sentido único.','Muda de sentido e é comum em residências.','Só existe em pilhas.','Não transmite energia.','Não tem tensão.'],1,'Corrente alternada muda de sentido e é usada em residências.'),
+Q('O efeito Joule é:',['Campo magnético ao redor do fio.','Aquecimento do condutor pela corrente.','Decomposição química da água.','Contração muscular.','Emissão de luz sem corrente.'],1,'O efeito Joule é o aquecimento produzido pela corrente.'),
+Q('Qual aparelho usa claramente o efeito Joule?',['Chuveiro elétrico.','Bússola.','Motor sem aquecimento.','Pilhas descarregadas.','Ímã parado.'],0,'Chuveiro elétrico transforma energia elétrica em calor.'),
+Q('O efeito magnético ocorre quando:',['A corrente gera campo magnético ao redor do condutor.','A água se decompõe.','O fio sempre congela.','O circuito fica aberto.','A tensão some.'],0,'Corrente elétrica pode produzir campo magnético.'),
+Q('O efeito químico da corrente aparece em:',['Aquecimento do resistor.','Decomposição de substâncias pela corrente.','Motor girando.','Alto-falante tocando.','Lâmpada neon apenas.'],1,'O efeito químico envolve reações causadas pela corrente.'),
+Q('O efeito fisiológico está ligado:',['À contração muscular em choques elétricos.','À luz de lâmpadas.','Ao aquecimento do chuveiro.','À decomposição da água.','Ao campo magnético de ímãs.'],0,'A corrente no corpo pode causar contração muscular.'),
+Q('DDP ou tensão elétrica é medida em:',['Ampère.','Ohm.','Volt.','Coulomb.','Joule.'],2,'A diferença de potencial é medida em volts.'),
+Q('A transmissão de energia em alta tensão é usada porque:',['Aumenta perdas por calor.','Reduz perdas em longas distâncias.','É usada só em pilhas.','Elimina fios.','Só funciona em casas.'],1,'Alta tensão e baixa corrente diminuem perdas por calor.'),
+Q('No cálculo i = Q / Δt, se Q=20 C e Δt=5 s, i vale:',['2 A.','4 A.','5 A.','10 A.','25 A.'],1,'i = 20 / 5 = 4 A.'),
+Q('Na fórmula i = Q / Δt, Q representa:',['Resistência.','Carga elétrica.','Tensão.','Potência.','Campo magnético.'],1,'Q é carga elétrica, medida em coulomb.'),
+Q('Um circuito funciona quando:',['Está aberto e sem fonte.','Tem caminho fechado e fonte de energia.','Possui apenas isolantes.','A chave está desligada.','Não tem condutor.'],1,'O circuito precisa estar fechado e ligado a uma fonte.'),
+Q('Em associação em série, a corrente:',['Tem vários caminhos.','Percorre um único caminho.','Não passa por receptores.','É sempre zero.','Só aparece em casas.'],1,'Em série, há apenas um caminho para a corrente.'),
+Q('Em associação em paralelo, a corrente:',['Tem vários caminhos.','Tem sempre um caminho único.','É nula.','Não chega à fonte.','Não passa em fios.'],0,'Em paralelo, a corrente pode se dividir em caminhos.'),
+Q('A resistência elétrica pode ser calculada por:',['R = U / i.','R = i / U.','U = R / i.','i = R / U.','R = U × i.'],0,'Pela Lei de Ohm: U = R × i, então R = U / i.'),
+Q('Se U=110 V e i=5 A, a resistência é:',['11 Ω.','22 Ω.','55 Ω.','105 Ω.','550 Ω.'],1,'R = U / i = 110 / 5 = 22 Ω.'),
+Q('Resistores servem principalmente para:',['Controlar/diminuir a corrente.','Armazenar energia.','Gerar energia do nada.','Transformar corrente em prótons.','Substituir tomadas.'],0,'Resistores oferecem resistência à passagem da corrente.'),
+Q('Capacitores são usados para:',['Armazenar energia elétrica temporariamente.','Gerar campo magnético sempre.','Aquecer água.','Impedir todo circuito.','Substituir fios.'],0,'Capacitores armazenam e liberam energia.'),
+Q('Indutores estão ligados ao:',['Efeito magnético da corrente.','Efeito químico apenas.','kWh da conta.','Aquecimento de chuveiros.','Vidro isolante.'],0,'Indutores lidam com campos magnéticos.'),
+Q('Circuito residencial é:',['Instalação que conduz eletricidade para tomadas, lâmpadas e chuveiros.','Circuito sem fonte.','Associação apenas em série.','Sistema de pilhas.','Circuito sem fio condutor.'],0,'Circuitos residenciais distribuem energia elétrica nas casas.'),
+Q('Energia elétrica é:',['Total consumido ou produzido ao longo do tempo.','Taxa instantânea apenas.','Resistência do fio.','Carga do próton.','Unidade de corrente.'],0,'Energia é o total consumido/produzido ao longo do tempo.'),
+Q('Potência elétrica é:',['Taxa de energia consumida ou gerada.','Carga em coulomb.','Resistência em ohm.','Tempo em segundos.','DDP em volts.'],0,'Potência mede a rapidez do consumo ou geração de energia.'),
+Q('A unidade de potência é:',['Joule.','Watt.','Coulomb.','Ohm.','Ampère.'],1,'Potência é medida em watt.'),
+Q('1 kW corresponde a:',['10 W.','100 W.','1000 W.','10000 W.','1 W.'],2,'1 quilowatt equivale a 1000 watts.'),
+Q('O kWh é usado para medir:',['Energia consumida na conta de luz.','Resistência elétrica.','Corrente instantânea.','Carga do elétron.','Tensão da pilha.'],0,'kWh mede energia elétrica consumida ao longo do tempo.'),
+Q('Um alto-falante transforma energia elétrica em:',['Sonora.','Química.','Nuclear.','Resistiva.','Carga elétrica.'],0,'Alto-falantes transformam energia elétrica em som.'),
+Q('Um motor elétrico transforma energia elétrica em:',['Cinética/movimento.','Química apenas.','Nuclear.','Carga elétrica.','DDP.'],0,'Motores transformam eletricidade em movimento.'),
+Q('Uma lâmpada transforma energia elétrica principalmente em:',['Luminosa.','Química.','Nuclear.','Massa.','Gravidade.'],0,'Lâmpadas emitem luz a partir de energia elétrica.')
 ];
-
-const geografia = [
-["Urbanização pode ser definida como:",["Crescimento da população e atividades urbanas","Retorno obrigatório ao campo","Crescimento exclusivo da agricultura","Fim das indústrias","Aumento de florestas nas capitais"],0,"Urbanização envolve crescimento das cidades e população urbana."],
-["Uma cidade planejada é:",["Cidade sem projeto","Cidade criada a partir de planejamento urbano","Cidade apenas rural","Cidade sem ruas","Cidade sem habitantes fixos"],1,"Cidade planejada segue projeto urbano prévio."],
-["Brasília é considerada:",["Cidade planejada para ser capital federal","Cidade portuária colonial","Cidade rural sem planejamento","Cidade chinesa","Capital do Egito"],0,"Brasília foi planejada para ser capital do Brasil."],
-["Cairo é:",["Capital do Quênia","Capital do Egito","Capital da África do Sul","Cidade chinesa","Cidade brasileira planejada"],1,"Cairo é a capital do Egito."],
-["Nairobi é:",["Capital do Egito","Capital do Quênia","Capital da China","Capital do Brasil","Capital da África do Sul"],1,"Nairobi é a capital do Quênia."],
-["Johanesburgo está localizada:",["No Egito","No Quênia","Na África do Sul","Na China","No Brasil"],2,"Johanesburgo fica na África do Sul."],
-["Xangai é uma cidade localizada:",["No Brasil","Na China","No Egito","No Quênia","Na África do Sul"],1,"Xangai fica na China."],
-["O setor primário envolve:",["Indústria","Comércio","Agricultura, pecuária e extrativismo","Bancos","Transporte urbano"],2,"Setor primário retira recursos da natureza."],
-["O setor secundário envolve:",["Agricultura","Indústria e transformação","Comércio","Turismo","Serviços públicos"],1,"Setor secundário transforma matéria-prima."],
-["O setor terciário envolve:",["Mineração","Indústria pesada","Comércio e serviços","Agricultura","Pecuária"],2,"Setor terciário é comércio e serviços."],
-["Um problema da urbanização rápida sem planejamento é:",["Fim da desigualdade","Fim das periferias","Moradia precária e falta de infraestrutura","Fim do trânsito","Aumento rural central"],2,"Urbanização desordenada cria problemas sociais."],
-["Desigualdade socioespacial significa:",["Serviços iguais para todos","Diferenças de acesso a renda, moradia e serviços","Diferença de clima","Aumento da agricultura","Separação de rios"],1,"É a desigualdade social no espaço urbano."],
-["Periferização é:",["Centro vazio","População de menor renda em áreas distantes e com menos estrutura","Todos no centro","Cidade para de crescer","Campo substitui cidade"],1,"Muitos moradores ficam longe dos centros e serviços."],
-["Conurbação ocorre quando:",["Cidades crescem e suas áreas urbanas se unem","Cidade desaparece","Zona rural aumenta no centro","Todos vão ao campo","Rio separa capitais"],0,"Conurbação é união física entre áreas urbanas."],
-["Metropolização se relaciona:",["Influência de grandes cidades","Fim das capitais","Redução urbana","Fim dos transportes","Apenas agricultura"],0,"Metrópoles influenciam outras regiões."],
-["Megacidade geralmente possui:",["Menos de 10 mil habitantes","Mais de 10 milhões de habitantes","Apenas população rural","Sem área urbana","Somente indústrias"],1,"Megacidade tem mais de 10 milhões de habitantes."],
-["Rede urbana é:",["Cidades sem relação","Relação e hierarquia entre cidades","Ruas de uma cidade","Bairros residenciais","Mapa de rios"],1,"Rede urbana é a relação entre cidades."],
-["Hierarquia urbana indica:",["Importância e influência entre cidades","Tamanho das ruas","Número de árvores","Número de rios","Distância entre fazendas"],0,"Cidades maiores têm mais influência."],
-["Mobilidade urbana está ligada:",["Deslocamento de pessoas e mercadorias","Crescimento das lavouras","Formação de rochas","Clima rural","Construção de casas apenas"],0,"Mobilidade é transporte e deslocamento."],
-["Gentrificação é:",["Valorização que pode expulsar moradores pobres","Área rural sem moradores","Queda de todos os preços","Fim das desigualdades","Cidade vira floresta"],0,"A valorização pode encarecer moradias."],
-["Segregação urbana ocorre quando:",["Todos moram misturados","Grupos sociais ficam separados por renda ou serviços","Cidade sem bairros","Campo vira capital","Indústria desaparece"],1,"É separação social no espaço urbano."],
-["Industrialização influencia a urbanização porque:",["Atrai pessoas para cidades por trabalho","Impede crescimento urbano","Acaba com transportes","Reduz cidades a fazendas","Acaba com comércio"],0,"Indústrias atraem trabalhadores."],
-["Economia informal envolve:",["Trabalho sem formalização completa","Grandes bancos apenas","Agricultura mecanizada","Sempre crime","Só cargo público"],0,"Inclui atividades sem registro formal completo."],
-["Verticalização urbana significa:",["Crescimento por prédios altos","Cidade vira rural","Redução dos prédios","Crescimento de rios","Fim das moradias"],0,"Verticalização é aumento de edifícios."],
-["Planejamento urbano busca:",["Organizar crescimento e melhorar infraestrutura","Aumentar problemas","Impedir serviços","Eliminar transportes","Acabar com cidades"],0,"Organiza moradia, transporte e serviços."]
+const G=[
+Q('Sobre a industrialização africana, marque a correta.',['É muito desenvolvida em todos os países.','É pouco desenvolvida e concentrada em partes da África do Sul e do norte.','Não existe indústria na África.','É igual à europeia.','Ocorre só no campo.'],1,'A industrialização africana é desigual e concentrada em algumas regiões.'),
+Q('África do Sul, Egito e Argélia aparecem no resumo como:',['Áreas sem indústria.','Destaques industriais africanos.','Países fora da África.','Exemplos de baixa urbanização obrigatória.','Blocos econômicos.'],1,'São áreas citadas com destaque industrial.'),
+Q('Muitas indústrias na África pertencem a:',['Empresas multinacionais.','Apenas pequenos agricultores.','Somente escolas.','Apenas feiras locais.','Nenhum grupo econômico.'],0,'O resumo cita a presença de empresas multinacionais.'),
+Q('O objetivo dos blocos econômicos africanos é:',['Aumentar a integração econômica entre países africanos.','Acabar com o comércio.','Isolar os países.','Impedir transporte.','Eliminar cidades.'],0,'Blocos econômicos buscam integração econômica.'),
+Q('São exemplos de blocos citados:',['UA, Ecowas, SADC, EAC e Comesa.','Mercosul, União Europeia e Otan.','Fifa, ONU e Nasa.','Apenas Brics.','Apenas União Europeia.'],0,'Esses blocos aparecem no resumo.'),
+Q('O transporte aéreo é importante na África por causa:',['Das grandes distâncias.','Da ausência total de comércio.','De funcionar apenas em rios.','De substituir toda indústria.','De impedir viagens.'],0,'Grandes distâncias tornam o transporte aéreo importante.'),
+Q('O transporte marítimo é bastante utilizado porque:',['É importante para o comércio mundial.','Não transporta mercadorias.','Só funciona no interior.','Não precisa de portos.','É usado apenas em bairros.'],0,'O transporte marítimo é essencial ao comércio mundial.'),
+Q('O Canal de Suez é fundamental porque:',['É rota estratégica do comércio mundial.','Fica no Brasil.','É uma estrada rural.','Impede navios.','Serve apenas à agricultura.'],0,'O Canal de Suez facilita rotas comerciais entre regiões.'),
+Q('Entre os impactos sociais africanos citados estão:',['Pobreza, desemprego e desigualdade social.','Fim da pobreza.','Pleno emprego.','Igualdade total.','Apenas problemas elétricos.'],0,'O resumo cita pobreza, desemprego e desigualdade social.'),
+Q('A pandemia de Covid-19:', ['Agravou problemas sociais.','Eliminou desemprego.','Acabou com desigualdade.','Não gerou impactos.','Resolveu pobreza.'],0,'A pandemia agravou problemas já existentes.'),
+Q('Urbanização é:', ['Crescimento da população urbana e das cidades.','Redução das cidades.','Aumento exclusivo rural.','Fim das capitais.','Volta obrigatória ao campo.'],0,'Urbanização envolve crescimento das cidades.'),
+Q('Cidade planejada é aquela que:', ['Surge sem organização.','É organizada a partir de um projeto urbano.','Não possui ruas.','É sempre rural.','Não tem serviços.'],1,'Cidades planejadas seguem planejamento prévio.'),
+Q('Brasília é exemplo de:', ['Cidade planejada.','Cidade chinesa.','Capital do Egito.','Cidade colonial africana.','Megacidade rural.'],0,'Brasília foi planejada para ser a capital federal.'),
+Q('Cairo é:', ['Capital do Egito.','Capital do Quênia.','Capital da China.','Cidade brasileira.','Capital da África do Sul.'],0,'Cairo é a capital do Egito.'),
+Q('Nairóbi é:', ['Capital do Egito.','Capital do Quênia.','Capital da África do Sul.','Cidade chinesa.','Capital do Brasil.'],1,'Nairóbi é a capital do Quênia.'),
+Q('Joanesburgo está relacionada:', ['À África do Sul e à economia/mineração.','Ao Egito e ao Canal de Suez.','Ao Brasil e Brasília.','À China e Xangai.','Ao Quênia como capital.'],0,'Joanesburgo fica na África do Sul e possui destaque econômico.'),
+Q('Xangai é:', ['Grande cidade chinesa de importância econômica.','Capital do Egito.','Cidade rural africana.','Cidade planejada do Brasil.','Capital do Quênia.'],0,'Xangai é uma grande cidade da China.'),
+Q('Setor primário envolve:', ['Agricultura, pecuária, pesca e extrativismo.','Indústria.','Comércio e serviços.','Bancos.','Turismo apenas.'],0,'O setor primário retira ou produz recursos básicos.'),
+Q('Setor secundário envolve:', ['Indústria e transformação de matéria-prima.','Agricultura.','Comércio.','Serviços.','Turismo.'],0,'O setor secundário transforma matérias-primas em produtos.'),
+Q('Setor terciário envolve:', ['Comércio e serviços.','Plantio.','Pecuária.','Mineração direta.','Extrativismo.'],0,'O setor terciário é comércio e serviços.'),
+Q('Urbanização sem planejamento pode causar:', ['Falta de infraestrutura, moradia precária e desigualdade.','Fim do trânsito.','Fim da pobreza.','Moradia digna automática.','Redução total da poluição.'],0,'Crescimento desordenado gera problemas urbanos.'),
+Q('Desigualdade socioespacial significa:', ['Diferenças sociais refletidas no espaço urbano.','Igualdade completa entre bairros.','Diferença apenas de clima.','Aumento de florestas.','Separação de rios.'],0,'A desigualdade aparece na distribuição de renda, moradia e serviços.'),
+Q('Periferização é:', ['Deslocamento de grupos de menor renda para áreas afastadas e com menos estrutura.','Todos morando no centro.','Fim das periferias.','Aumento de áreas rurais centrais.','Construção apenas de prédios de luxo.'],0,'Periferização afasta moradores pobres dos centros e serviços.'),
+Q('Conurbação ocorre quando:', ['Áreas urbanas de cidades próximas crescem e se unem.','Uma cidade desaparece.','O campo domina a capital.','Rios viram estradas.','A população volta toda ao campo.'],0,'Conurbação é a união física de áreas urbanas.'),
+Q('Metropolização está ligada:', ['À influência de grandes cidades sobre outras áreas.','Ao fim das metrópoles.','À redução das cidades.','Apenas à agricultura.','A países sem cidades.'],0,'Metrópoles concentram serviços e influência.'),
+Q('Megacidade geralmente tem:', ['Mais de 10 milhões de habitantes.','Menos de 10 mil habitantes.','Apenas zona rural.','Sem comércio.','Sem transporte.'],0,'Megacidades possuem mais de 10 milhões de habitantes.'),
+Q('Rede urbana é:', ['Relação e hierarquia entre cidades.','Apenas ruas de um bairro.','Mapa de rios.','Cidades isoladas sem contato.','Somente prédios altos.'],0,'Rede urbana é o conjunto de relações entre cidades.'),
+Q('Mobilidade urbana trata:', ['Do deslocamento de pessoas e mercadorias na cidade.','Da formação de rochas.','Da agricultura africana.','Da emissão de luz.','Do núcleo do átomo.'],0,'Mobilidade urbana envolve transportes e deslocamentos.'),
+Q('Gentrificação pode gerar:', ['Valorização de áreas e expulsão de moradores de baixa renda.','Redução geral dos aluguéis.','Fim das desigualdades.','Volta ao campo.','Fim do comércio.'],0,'Áreas valorizadas podem ficar caras e expulsar moradores.'),
+Q('Segregação urbana é:', ['Separação de grupos sociais no espaço urbano.','Igualdade entre todos os bairros.','Fim das diferenças sociais.','Ausência de periferias.','Crescimento exclusivo rural.'],0,'Segregação separa grupos por renda e acesso a serviços.'),
+Q('Industrialização influencia a urbanização porque:', ['Atrai pessoas para cidades em busca de trabalho.','Impede o crescimento urbano.','Acaba com transportes.','Reduz cidades a fazendas.','Elimina comércio.'],0,'Indústrias geram empregos e atraem população.'),
+Q('Economia informal envolve:', ['Atividades sem registro formal completo.','Apenas bancos internacionais.','Somente cargos públicos.','Trabalho formal obrigatório.','Apenas indústria pesada.'],0,'Economia informal inclui trabalhos sem formalização completa.'),
+Q('Verticalização urbana significa:', ['Crescimento de prédios e construções altas.','Fim dos edifícios.','Volta ao campo.','Redução urbana.','Criação de rios.'],0,'Verticalização é aumento de prédios.'),
+Q('Planejamento urbano busca:', ['Organizar o crescimento e melhorar infraestrutura.','Aumentar problemas.','Impedir serviços.','Eliminar transportes.','Acabar com cidades.'],0,'Planejamento organiza moradia, transporte, serviços e crescimento.'),
+Q('Agricultura pertence ao setor:', ['Primário.','Secundário.','Terciário.','Industrial.','Financeiro.'],0,'Agricultura é setor primário.'),
+Q('Indústria pertence ao setor:', ['Primário.','Secundário.','Terciário.','Informal sempre.','Rural familiar.'],1,'Indústria é setor secundário.'),
+Q('Bancos, transporte, escolas e comércio são setor:', ['Primário.','Secundário.','Terciário.','Extrativista.','Agrícola.'],2,'Serviços e comércio são setor terciário.'),
+Q('A integração econômica entre países africanos é objetivo:', ['Dos blocos econômicos.','Da segregação urbana.','Do efeito Joule.','Da corrente alternada.','Da resistência elétrica.'],0,'Blocos econômicos procuram integrar economias.'),
+Q('O desemprego, no resumo, é um:', ['Impacto social.','Componente elétrico.','Tipo de corrente.','Setor secundário.','Exemplo de condutor.'],0,'Desemprego aparece entre os impactos sociais.'),
+Q('Por que muitos produtos ficam caros em alguns países africanos?',[
+'A produção agrícola é muito pequena.',
+'Grande parte da matéria-prima é exportada, reduzindo a oferta no mercado interno.',
+'Os países não possuem recursos naturais.',
+'A população consome poucos produtos.',
+'As importações são proibidas.'
+],1,'Como boa parte da matéria-prima é exportada, sobra menos para o mercado interno, aumentando os preços.'),
+Q('Qual é o principal objetivo do sistema de plantation?',[
+'Produzir alimentos para consumo da família.',
+'Produzir em pequena escala.',
+'Produzir em larga escala para exportação.',
+'Abastecer apenas o mercado interno.',
+'Produzir somente frutas.'
+],2,'O plantation produz em grande escala com foco no mercado externo.'),
+Q('A agricultura de subsistência tem como principal finalidade:',[
+'Exportar produtos agrícolas.',
+'Produzir para consumo próprio da família.',
+'Abastecer grandes indústrias.',
+'Produzir apenas café.',
+'Gerar altos lucros.'
+],1,'Na agricultura de subsistência, a produção é voltada para o consumo da própria família.'),
+Q('Quais organizações regionais africanas aparecem no resumo?',[
+'Mercosul e União Europeia.',
+'SADC e EAC.',
+'ONU e OTAN.',
+'BRICS e Mercosul.',
+'Nafta e União Europeia.'
+],1,'O resumo destaca a SADC e a EAC como organizações regionais africanas.'),
+Q('Por que o Canal de Suez é tão importante para o comércio mundial?',[
+'Porque liga apenas cidades africanas.',
+'Porque diminui o tamanho dos navios.',
+'Porque encurta as rotas marítimas e facilita o transporte de mercadorias.',
+'Porque produz petróleo.',
+'Porque impede o comércio internacional.'
+],2,'O Canal de Suez reduz o tempo de viagem dos navios e facilita o comércio internacional.'),
+Q('O aumento das exportações pode provocar qual consequência econômica?',[
+'Diminuição do PIB.',
+'Aumento do desemprego automaticamente.',
+'Aumento do PIB.',
+'Redução da população.',
+'Fim da industrialização.'
+],2,'Com mais exportações, a economia pode crescer e aumentar o PIB.'),
+Q('Qual é a principal diferença entre plantation e agricultura de subsistência?',[
+'Não existe diferença.',
+'Plantation produz para exportação; subsistência produz para consumo próprio.',
+'Plantation ocorre apenas em cidades.',
+'Subsistência produz somente para exportação.',
+'Plantation utiliza apenas máquinas antigas.'
+],1,'Plantation é comercial; subsistência é voltada para alimentar a própria família.'),
+Q('No sistema de plantation, a produção geralmente é:',[
+'Pequena e destinada ao consumo da família.',
+'Grande e voltada para exportação.',
+'Apenas para escolas.',
+'Feita sem utilização de terras agrícolas.',
+'Exclusiva para criação de animais.'
+],1,'O plantation utiliza grandes propriedades para produzir em larga escala.'),
 ];
-
-let data=[], index=0, score=0, subjectName="";
-
-function shuffle(arr){return arr.sort(()=>Math.random()-0.5)}
-function show(id){["menu","how","quiz","result"].forEach(x=>document.getElementById(x).classList.add("hidden"));document.getElementById(id).classList.remove("hidden")}
-function startQuiz(type){
-  data = shuffle([...(type==="ciencias"?ciencias:geografia)]);
-  index=0; score=0; subjectName=type==="ciencias"?"Ciências":"Geografia";
-  show("quiz"); renderQuestion();
-}
-function renderQuestion(){
-  const q=data[index];
-  document.getElementById("subject").textContent=subjectName;
-  document.getElementById("counter").textContent=`${index+1}/${data.length}`;
-  document.getElementById("progress").style.width=`${((index+1)/data.length)*100}%`;
-  document.getElementById("question").textContent=q[0];
-  document.getElementById("feedback").innerHTML="";
-  document.getElementById("nextBtn").classList.add("hidden");
-  const box=document.getElementById("answers");
-  box.innerHTML="";
-  q[1].forEach((alt,i)=>{
-    const b=document.createElement("button");
-    b.className="alt";
-    b.textContent=String.fromCharCode(65+i)+") "+alt;
-    b.onclick=()=>answer(i,b);
-    box.appendChild(b);
-  });
-}
-function answer(i,btn){
-  const q=data[index];
-  const buttons=[...document.querySelectorAll(".alt")];
-  buttons.forEach(b=>b.disabled=true);
-  buttons[q[2]].classList.add("correct");
-  if(i===q[2]){
-    score++;
-    document.getElementById("feedback").innerHTML=`<div class="explain">✅ Acertou! +1 ponto</div>`;
-  }else{
-    btn.classList.add("wrong");
-    document.getElementById("feedback").innerHTML=`<div class="explain">❌ Errou!<br><b>Explicação:</b> ${q[3]}</div>`;
-  }
-  document.getElementById("nextBtn").classList.remove("hidden");
-}
-function nextQuestion(){
-  index++;
-  if(index>=data.length) finish();
-  else renderQuestion();
-}
-function finish(){
-  show("result");
-  const pct=Math.round((score/data.length)*100);
-  let rank="Treinamento necessário";
-  if(pct===100) rank="Gênio Supremo";
-  else if(pct>=90) rank="Diamante";
-  else if(pct>=75) rank="Ouro";
-  else if(pct>=60) rank="Prata";
-  else if(pct>=40) rank="Bronze";
-  document.getElementById("score").textContent=`${score}/${data.length} acertos`;
-  document.getElementById("rank").textContent=`🏆 Ranking: ${rank}`;
-  document.getElementById("percent").textContent=`Precisão: ${pct}%`;
-}
-function showHow(){show("how")}
-function backMenu(){show("menu")}
-function restart(){startQuiz(subjectName==="Ciências"?"ciencias":"geografia")}
-</script>
-</body>
-</html>
+let qs=[],idx=0,pts=0,tipo='c',mat='',inicio=0,timer=null;
+function $(x){return document.getElementById(x)}function show(id){['menu','how','quiz','res'].forEach(x=>$(x).classList.add('hidden'));$(id).classList.remove('hidden')}function menu(){clearInterval(timer);load();show('menu')}function load(){$('bc').textContent=(localStorage.bc||0)+'%';$('bg').textContent=(localStorage.bg||0)+'%';$('nome').value=localStorage.nome||''}function shuf(a){a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}function prep(o){let m=shuf(o.a.map((t,i)=>({t,ok:i==o.c})));return{p:o.p,a:m.map(x=>x.t),c:m.findIndex(x=>x.ok),e:o.e}}function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}function tick(){$('tempo').textContent=fmt(Math.floor((Date.now()-inicio)/1000))}function beep(f){try{let c=new AudioContext(),o=c.createOscillator(),g=c.createGain();o.frequency.value=f;o.connect(g);g.connect(c.destination);g.gain.value=.05;o.start();setTimeout(()=>{o.stop();c.close()},90)}catch(e){}}
+function start(t){tipo=t;mat=t=='c'?'Ciências':'Geografia';localStorage.nome=$('nome').value.trim()||'Jogador';qs=shuf(t=='c'?C:G).map(prep);idx=0;pts=0;inicio=Date.now();clearInterval(timer);timer=setInterval(tick,500);show('quiz');render()}
+function render(){let q=qs[idx];$('mat').textContent=mat;$('cont').textContent=(idx+1)+'/'+qs.length;$('fill').style.width=((idx+1)/qs.length*100)+'%';$('perg').textContent=q.p;$('alts').innerHTML='';$('feed').innerHTML='';$('next').classList.add('hidden');q.a.forEach((a,i)=>{let b=document.createElement('button');b.className='alt';b.textContent=String.fromCharCode(65+i)+') '+a;b.onclick=()=>ans(i,b);$('alts').appendChild(b)})}
+function ans(i,b){let q=qs[idx],bs=[...document.querySelectorAll('.alt')];bs.forEach(x=>x.disabled=true);bs[q.c].classList.add('ok');if(i==q.c){pts++;beep(800);$('feed').innerHTML='<div class="exp">✅ Acertou! +10 XP</div>'}else{beep(180);if(navigator.vibrate)navigator.vibrate(100);b.classList.add('bad');$('app').classList.add('shake');setTimeout(()=>$('app').classList.remove('shake'),260);$('feed').innerHTML='<div class="exp">❌ Errou!<br><b>Explicação:</b> '+q.e+'</div>'}$('next').classList.remove('hidden')}
+function next(){idx++;idx>=qs.length?finish():render()}
+function finish(){clearInterval(timer);show('res');let pct=Math.round(pts/qs.length*100),er=qs.length-pts,sec=Math.floor((Date.now()-inicio)/1000),rank='Treinamento';if(pct==100)rank='Gênio Supremo';else if(pct>=90)rank='Diamante';else if(pct>=75)rank='Ouro';else if(pct>=60)rank='Prata';else if(pct>=40)rank='Bronze';let key=tipo=='c'?'bc':'bg';if(pct>Number(localStorage[key]||0))localStorage[key]=pct;$('score').textContent=pct+'%';$('rank').textContent='🏆 '+rank;$('jn').textContent=localStorage.nome;$('jm').textContent=mat;$('ja').textContent=pts;$('je').textContent=er;$('xp').textContent=pts*10;$('tf').textContent=fmt(sec);load()}
+load();
+</script></body></html>
