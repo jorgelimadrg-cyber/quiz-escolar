@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Escolar 2026</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:linear-gradient(135deg,#111827,#1e3a8a,#111827);
+  color:white;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+}
+.app{
+  width:100%;
+  max-width:520px;
+  background:rgba(17,24,39,.94);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:24px;
+  padding:22px;
+  box-shadow:0 20px 60px rgba(0,0,0,.45);
+}
+h1{
+  text-align:center;
+  margin:0;
+  font-size:34px;
+  color:#38bdf8;
+}
+.sub{
+  text-align:center;
+  color:#cbd5e1;
+  margin:8px 0 22px;
+}
+.btn{
+  width:100%;
+  border:0;
+  border-radius:16px;
+  padding:16px;
+  margin:8px 0;
+  font-size:18px;
+  font-weight:bold;
+  color:white;
+  background:#2563eb;
+  cursor:pointer;
+}
+.btn:hover{filter:brightness(1.15)}
+.green{background:#16a34a}
+.orange{background:#ea580c}
+.red{background:#dc2626}
+.purple{background:#7c3aed}
+.card{
+  background:#0f172a;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:18px;
+  padding:16px;
+  margin:12px 0;
+}
+.question{
+  font-size:20px;
+  line-height:1.35;
+  margin-bottom:14px;
+}
+.alt{
+  width:100%;
+  text-align:left;
+  background:#1e293b;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:14px;
+  padding:14px;
+  margin:8px 0;
+  color:white;
+  font-size:16px;
+}
+.alt:disabled{opacity:.9}
+.correct{background:#15803d!important}
+.wrong{background:#b91c1c!important}
+.progressBox{
+  width:100%;
+  height:16px;
+  background:#334155;
+  border-radius:99px;
+  overflow:hidden;
+  margin:10px 0;
+}
+.progress{
+  height:100%;
+  width:0%;
+  background:#22c55e;
+  transition:.3s;
+}
+.top{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  color:#cbd5e1;
+  font-size:14px;
+}
+.center{text-align:center}
+.small{font-size:14px;color:#cbd5e1}
+.hidden{display:none}
+.badge{
+  display:inline-block;
+  padding:8px 12px;
+  border-radius:999px;
+  background:#334155;
+  margin:8px 0;
+}
+.explain{
+  background:#172554;
+  border-left:4px solid #38bdf8;
+  padding:12px;
+  border-radius:10px;
+  margin-top:12px;
+  color:#dbeafe;
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div id="menu">
+    <h1>Quiz Escolar</h1>
+    <p class="sub">Ciências e Geografia • versão celular</p>
+    <button class="btn green" onclick="startQuiz('ciencias')">🧪 Jogar Ciências</button>
+    <button class="btn orange" onclick="startQuiz('geografia')">🌎 Jogar Geografia</button>
+    <button class="btn purple" onclick="showHow()">❔ Como jogar</button>
+  </div>
+
+  <div id="how" class="hidden">
+    <h1>Como jogar</h1>
+    <div class="card">
+      <p>Escolha uma matéria, leia a pergunta e toque na alternativa correta.</p>
+      <p>Cada quiz tem 25 perguntas. No final aparece sua pontuação e ranking.</p>
+    </div>
+    <button class="btn" onclick="backMenu()">Voltar</button>
+  </div>
+
+  <div id="quiz" class="hidden">
+    <div class="top">
+      <span id="subject"></span>
+      <span id="counter"></span>
+    </div>
+    <div class="progressBox"><div id="progress" class="progress"></div></div>
+    <div class="card">
+      <div id="question" class="question"></div>
+      <div id="answers"></div>
+      <div id="feedback"></div>
+    </div>
+    <button id="nextBtn" class="btn hidden" onclick="nextQuestion()">Próxima</button>
+  </div>
+
+  <div id="result" class="hidden center">
+    <h1>Resultado</h1>
+    <div class="card">
+      <h2 id="score"></h2>
+      <div id="rank" class="badge"></div>
+      <p id="percent" class="small"></p>
+    </div>
+    <button class="btn green" onclick="restart()">Jogar de novo</button>
+    <button class="btn red" onclick="backMenu()">Menu</button>
+  </div>
+</div>
+
+<script>
+const ciencias = [
+["Sobre a estrutura básica do átomo, assinale a correta.",["Prótons e elétrons ficam no núcleo.","Prótons e nêutrons ficam no núcleo, e elétrons na eletrosfera.","Elétrons e nêutrons ficam no núcleo.","Todas as partículas ficam na eletrosfera.","O núcleo possui apenas elétrons."],1,"O núcleo possui prótons e nêutrons; elétrons ficam na eletrosfera."],
+["Sobre as cargas das partículas atômicas, marque a correta.",["Próton é negativo, elétron positivo e nêutron neutro.","Próton é neutro, elétron negativo e nêutron positivo.","Próton é positivo, elétron negativo e nêutron não possui carga.","Próton e elétron são neutros.","Todas possuem carga negativa."],2,"Próton é positivo, elétron é negativo e nêutron é neutro."],
+["Quando um átomo perde elétrons, ele se torna:",["Íon negativo.","Íon positivo.","Nêutron.","Átomo neutro.","Molécula isolante."],1,"Ao perder elétrons, fica com excesso de carga positiva."],
+["Quando um átomo ganha elétrons, ele se torna:",["Íon positivo.","Íon negativo.","Átomo sem núcleo.","Nêutron livre.","Condutor perfeito."],1,"Ganhar elétrons aumenta a carga negativa."],
+["A intensidade da corrente elétrica pode ser calculada por:",["i = Q / Δt","Q = i / Δt","Δt = i / Q","i = Δt / Q","Q = Δt / i"],0,"Corrente é carga elétrica dividida pelo intervalo de tempo."],
+["Na fórmula i = Q / Δt, os símbolos significam:",["i=resistência, Q=tensão, Δt=carga","i=corrente, Q=carga elétrica, Δt=intervalo de tempo","i=tensão, Q=corrente, Δt=resistência","i=carga, Q=resistência, Δt=corrente","i=potência, Q=energia, Δt=tensão"],1,"i é corrente, Q é carga elétrica e Δt é intervalo de tempo."],
+["A unidade correta da corrente elétrica no SI é:",["Ohm","Volt","Ampere","Coulomb","Watt"],2,"Corrente elétrica é medida em ampere."],
+["A unidade correta da carga elétrica no SI é:",["Ampere","Coulomb","Ohm","Volt","Joule"],1,"Carga elétrica é medida em coulomb."],
+["A resistência elétrica pela Primeira Lei de Ohm pode ser calculada por:",["R = U / i","R = i / U","U = R / i","i = R / U","R = U × i"],0,"Como U = R × i, então R = U / i."],
+["Na expressão U = R × i, assinale a correta.",["U é corrente, R é carga, i é tensão","U é tensão, R é resistência, i é corrente","U é resistência, R é tensão, i é tempo","U é carga, R é corrente, i é resistência","U é potência, R é energia, i é carga"],1,"U é tensão, R é resistência e i é corrente."],
+["A unidade de resistência elétrica é:",["Volt","Ampere","Ohm","Coulomb","Segundo"],2,"Resistência elétrica é medida em ohm."],
+["A unidade de tensão elétrica é:",["Ampere","Coulomb","Volt","Ohm","Newton"],2,"Tensão elétrica é medida em volt."],
+["Materiais condutores são aqueles que:",["Impedem totalmente cargas","Facilitam a passagem da corrente","Não possuem elétrons","São sempre plásticos","Anulam a tensão"],1,"Condutores facilitam o movimento das cargas."],
+["Materiais isolantes são aqueles que:",["Facilitam a corrente","Dificultam a passagem da corrente","Transformam elétrons em prótons","Não possuem átomos","Sempre aumentam a corrente"],1,"Isolantes dificultam o movimento de cargas."],
+["O efeito Joule está relacionado:",["Ao aquecimento pela passagem da corrente","Ao resfriamento do condutor","À perda de prótons","À transformação de nêutrons","Ao desaparecimento da tensão"],0,"O efeito Joule transforma energia elétrica em calor."],
+["Se a resistência aumenta e a tensão fica constante, a corrente tende a:",["Aumentar","Diminuir","Ficar infinita","Virar carga","Sumir sempre"],1,"Pela lei de Ohm, i = U / R."],
+["Se a tensão aumenta e a resistência fica constante, a corrente tende a:",["Diminuir","Aumentar","Ficar negativa sempre","Virar resistência","Não mudar"],1,"Se U aumenta e R fica igual, a corrente aumenta."],
+["A eletrosfera é a região onde ficam:",["Prótons","Nêutrons","Elétrons","Núcleos","Íons positivos apenas"],2,"Elétrons ficam na eletrosfera."],
+["Um átomo eletricamente neutro possui:",["Mais prótons que elétrons","Mais elétrons que prótons","Mesmo número de prótons e elétrons","Nenhum próton","Apenas nêutrons"],2,"Cargas positivas e negativas se equilibram."],
+["A corrente elétrica em metais ocorre principalmente pelo movimento de:",["Prótons livres","Nêutrons livres","Elétrons livres","Núcleos","Moléculas de ar"],2,"Nos metais, elétrons livres conduzem corrente."],
+["Alta tensão é usada na transmissão de energia porque:",["Diminui perdas em longas distâncias","Elimina totalmente resistência","Transforma corrente em nêutrons","Impede todo aquecimento","É usada só em casas"],0,"Alta tensão reduz perdas no transporte."],
+["Baixa tensão em residências é usada porque:",["É mais segura para uso doméstico","Não produz corrente","Anula o efeito Joule","Transforma isolantes","Faz o tempo elétrico aumentar"],0,"É mais segura para aparelhos e pessoas."],
+["A diferença entre condutor e isolante está principalmente:",["Na facilidade de movimentação das cargas","Na ausência de átomos","Na quantidade de nêutrons livres","Na cor","No tamanho"],0,"O ponto principal é o movimento das cargas."],
+["Perder elétrons deixa um corpo:",["Negativo","Positivo","Sem massa","Sem núcleo","Sempre neutro"],1,"Perder elétrons remove cargas negativas."],
+["Ganhar elétrons deixa um corpo:",["Positivo","Negativo","Sem carga","Sem átomo","Com mais prótons"],1,"Ganhar elétrons aumenta cargas negativas."]
+];
+
+const geografia = [
+["Urbanização pode ser definida como:",["Crescimento da população e atividades urbanas","Retorno obrigatório ao campo","Crescimento exclusivo da agricultura","Fim das indústrias","Aumento de florestas nas capitais"],0,"Urbanização envolve crescimento das cidades e população urbana."],
+["Uma cidade planejada é:",["Cidade sem projeto","Cidade criada a partir de planejamento urbano","Cidade apenas rural","Cidade sem ruas","Cidade sem habitantes fixos"],1,"Cidade planejada segue projeto urbano prévio."],
+["Brasília é considerada:",["Cidade planejada para ser capital federal","Cidade portuária colonial","Cidade rural sem planejamento","Cidade chinesa","Capital do Egito"],0,"Brasília foi planejada para ser capital do Brasil."],
+["Cairo é:",["Capital do Quênia","Capital do Egito","Capital da África do Sul","Cidade chinesa","Cidade brasileira planejada"],1,"Cairo é a capital do Egito."],
+["Nairobi é:",["Capital do Egito","Capital do Quênia","Capital da China","Capital do Brasil","Capital da África do Sul"],1,"Nairobi é a capital do Quênia."],
+["Johanesburgo está localizada:",["No Egito","No Quênia","Na África do Sul","Na China","No Brasil"],2,"Johanesburgo fica na África do Sul."],
+["Xangai é uma cidade localizada:",["No Brasil","Na China","No Egito","No Quênia","Na África do Sul"],1,"Xangai fica na China."],
+["O setor primário envolve:",["Indústria","Comércio","Agricultura, pecuária e extrativismo","Bancos","Transporte urbano"],2,"Setor primário retira recursos da natureza."],
+["O setor secundário envolve:",["Agricultura","Indústria e transformação","Comércio","Turismo","Serviços públicos"],1,"Setor secundário transforma matéria-prima."],
+["O setor terciário envolve:",["Mineração","Indústria pesada","Comércio e serviços","Agricultura","Pecuária"],2,"Setor terciário é comércio e serviços."],
+["Um problema da urbanização rápida sem planejamento é:",["Fim da desigualdade","Fim das periferias","Moradia precária e falta de infraestrutura","Fim do trânsito","Aumento rural central"],2,"Urbanização desordenada cria problemas sociais."],
+["Desigualdade socioespacial significa:",["Serviços iguais para todos","Diferenças de acesso a renda, moradia e serviços","Diferença de clima","Aumento da agricultura","Separação de rios"],1,"É a desigualdade social no espaço urbano."],
+["Periferização é:",["Centro vazio","População de menor renda em áreas distantes e com menos estrutura","Todos no centro","Cidade para de crescer","Campo substitui cidade"],1,"Muitos moradores ficam longe dos centros e serviços."],
+["Conurbação ocorre quando:",["Cidades crescem e suas áreas urbanas se unem","Cidade desaparece","Zona rural aumenta no centro","Todos vão ao campo","Rio separa capitais"],0,"Conurbação é união física entre áreas urbanas."],
+["Metropolização se relaciona:",["Influência de grandes cidades","Fim das capitais","Redução urbana","Fim dos transportes","Apenas agricultura"],0,"Metrópoles influenciam outras regiões."],
+["Megacidade geralmente possui:",["Menos de 10 mil habitantes","Mais de 10 milhões de habitantes","Apenas população rural","Sem área urbana","Somente indústrias"],1,"Megacidade tem mais de 10 milhões de habitantes."],
+["Rede urbana é:",["Cidades sem relação","Relação e hierarquia entre cidades","Ruas de uma cidade","Bairros residenciais","Mapa de rios"],1,"Rede urbana é a relação entre cidades."],
+["Hierarquia urbana indica:",["Importância e influência entre cidades","Tamanho das ruas","Número de árvores","Número de rios","Distância entre fazendas"],0,"Cidades maiores têm mais influência."],
+["Mobilidade urbana está ligada:",["Deslocamento de pessoas e mercadorias","Crescimento das lavouras","Formação de rochas","Clima rural","Construção de casas apenas"],0,"Mobilidade é transporte e deslocamento."],
+["Gentrificação é:",["Valorização que pode expulsar moradores pobres","Área rural sem moradores","Queda de todos os preços","Fim das desigualdades","Cidade vira floresta"],0,"A valorização pode encarecer moradias."],
+["Segregação urbana ocorre quando:",["Todos moram misturados","Grupos sociais ficam separados por renda ou serviços","Cidade sem bairros","Campo vira capital","Indústria desaparece"],1,"É separação social no espaço urbano."],
+["Industrialização influencia a urbanização porque:",["Atrai pessoas para cidades por trabalho","Impede crescimento urbano","Acaba com transportes","Reduz cidades a fazendas","Acaba com comércio"],0,"Indústrias atraem trabalhadores."],
+["Economia informal envolve:",["Trabalho sem formalização completa","Grandes bancos apenas","Agricultura mecanizada","Sempre crime","Só cargo público"],0,"Inclui atividades sem registro formal completo."],
+["Verticalização urbana significa:",["Crescimento por prédios altos","Cidade vira rural","Redução dos prédios","Crescimento de rios","Fim das moradias"],0,"Verticalização é aumento de edifícios."],
+["Planejamento urbano busca:",["Organizar crescimento e melhorar infraestrutura","Aumentar problemas","Impedir serviços","Eliminar transportes","Acabar com cidades"],0,"Organiza moradia, transporte e serviços."]
+];
+
+let data=[], index=0, score=0, subjectName="";
+
+function shuffle(arr){return arr.sort(()=>Math.random()-0.5)}
+function show(id){["menu","how","quiz","result"].forEach(x=>document.getElementById(x).classList.add("hidden"));document.getElementById(id).classList.remove("hidden")}
+function startQuiz(type){
+  data = shuffle([...(type==="ciencias"?ciencias:geografia)]);
+  index=0; score=0; subjectName=type==="ciencias"?"Ciências":"Geografia";
+  show("quiz"); renderQuestion();
+}
+function renderQuestion(){
+  const q=data[index];
+  document.getElementById("subject").textContent=subjectName;
+  document.getElementById("counter").textContent=`${index+1}/${data.length}`;
+  document.getElementById("progress").style.width=`${((index+1)/data.length)*100}%`;
+  document.getElementById("question").textContent=q[0];
+  document.getElementById("feedback").innerHTML="";
+  document.getElementById("nextBtn").classList.add("hidden");
+  const box=document.getElementById("answers");
+  box.innerHTML="";
+  q[1].forEach((alt,i)=>{
+    const b=document.createElement("button");
+    b.className="alt";
+    b.textContent=String.fromCharCode(65+i)+") "+alt;
+    b.onclick=()=>answer(i,b);
+    box.appendChild(b);
+  });
+}
+function answer(i,btn){
+  const q=data[index];
+  const buttons=[...document.querySelectorAll(".alt")];
+  buttons.forEach(b=>b.disabled=true);
+  buttons[q[2]].classList.add("correct");
+  if(i===q[2]){
+    score++;
+    document.getElementById("feedback").innerHTML=`<div class="explain">✅ Acertou! +1 ponto</div>`;
+  }else{
+    btn.classList.add("wrong");
+    document.getElementById("feedback").innerHTML=`<div class="explain">❌ Errou!<br><b>Explicação:</b> ${q[3]}</div>`;
+  }
+  document.getElementById("nextBtn").classList.remove("hidden");
+}
+function nextQuestion(){
+  index++;
+  if(index>=data.length) finish();
+  else renderQuestion();
+}
+function finish(){
+  show("result");
+  const pct=Math.round((score/data.length)*100);
+  let rank="Treinamento necessário";
+  if(pct===100) rank="Gênio Supremo";
+  else if(pct>=90) rank="Diamante";
+  else if(pct>=75) rank="Ouro";
+  else if(pct>=60) rank="Prata";
+  else if(pct>=40) rank="Bronze";
+  document.getElementById("score").textContent=`${score}/${data.length} acertos`;
+  document.getElementById("rank").textContent=`🏆 Ranking: ${rank}`;
+  document.getElementById("percent").textContent=`Precisão: ${pct}%`;
+}
+function showHow(){show("how")}
+function backMenu(){show("menu")}
+function restart(){startQuiz(subjectName==="Ciências"?"ciencias":"geografia")}
+</script>
+</body>
+</html>
